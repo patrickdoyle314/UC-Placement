@@ -1,0 +1,18 @@
+# Downloaded sources (see README > Data for where each comes from)
+data/raw/
+
+# Generated tables
+data/processed/
+
+# Exchange outbox (generated)
+exchange/outbox/
+
+# Python
+__pycache__/
+*.pyc
+
+# Office lock files
+~$*
+
+# Internal plan document (mentions approvals); keep local
+docs/*.docx
