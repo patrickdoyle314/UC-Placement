@@ -53,7 +53,7 @@ UC-Placement/
 ## Run
 
 ```bash
-pip install openpyxl scipy
+pip install -r requirements.txt   # SciPy, libpysal (spatial weights), matplotlib and python-docx (reporting)
 python src/build_dataset.py          # Week 1 table + reconciliation
 python exchange/export_exchange.py   # aggregates for adjacent projects
 python alignment/align_mp.py         # optional, local only: coincidence checks with MP

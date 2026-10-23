@@ -7,6 +7,12 @@ dates are when the change was made.
 
 Nothing yet.
 
+## [0.2.1] - 2026-10-22
+
+### Added
+- `requirements.txt`, including `matplotlib` and `python-docx` for reporting, `scipy` for analysis and backtests,
+  and `libpysal` for spatial weights (Week 4 Moran's I and LISA; brings in `geopandas`, `shapely`, `pandas`).
+
 ## [0.2.0] - 2026-10-22
 
 ### Added

@@ -1,0 +1,13 @@
+# Data assembly (MPI spreadsheet)
+openpyxl>=3.1
+
+# Analysis, backtests, alignment checks
+numpy>=1.26
+scipy>=1.11
+
+# Spatial analysis: weights for Moran's I / LISA (plan Week 4); pulls in geopandas, shapely, pandas
+libpysal>=4.10
+
+# Reporting: charts and Word documents
+matplotlib>=3.8
+python-docx>=1.1
