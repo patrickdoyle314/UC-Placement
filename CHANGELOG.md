@@ -7,6 +7,12 @@ dates are when the change was made.
 
 Nothing yet.
 
+## [0.2.0] - 2026-10-22
+
+### Added
+- `docs/modeling_candidates.md`: ranked predictive candidates for service planning.
+- `src/probes/share_backtest.py`: how predictable next year's state and county shares are (last year's shares: 0.206 share-point error at state level).
+
 ## [0.1.1] - 2026-10-22
 
 ### Added
