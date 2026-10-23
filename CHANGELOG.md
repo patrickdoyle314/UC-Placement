@@ -7,6 +7,16 @@ dates are when the change was made.
 
 Nothing yet.
 
+## [0.1.1] - 2026-10-22
+
+### Added
+- Private GitHub repository (github.com/patrickdoyle314/UC-Placement); public only after FSO and
+  contract-lead sign-off.
+- README section "Built alongside another project", linking to the MP repository.
+
+### Changed
+- README and problem statement status: private on GitHub instead of local only.
+
 ## [0.1.0] - 2026-10-22 (Week 1: scope and data assembly)
 
 ### Added

@@ -9,7 +9,15 @@ FY2015–FY2025, and what a future rise in national volume would mean for local 
 - Changes: [`CHANGELOG.md`](CHANGELOG.md)
 
 **Status:** Week 1 (scope and data assembly) done, pending FSO and contract-lead approval.
-This repository is local only. Nothing is published until sign-off is recorded.
+This repository is **private** on GitHub until sign-off is recorded; it becomes public only after that.
+
+## Built alongside another project
+
+This project is being built alongside **[MP](https://github.com/patrickdoyle314/MP)**, a separate
+project on open missing-person cases for children and young adults. The two stay separate: each has
+its own data, code, README and changelog. They communicate only through aggregate tables under the
+shared contract in [`exchange/EXCHANGE.md`](exchange/EXCHANGE.md); no individual records pass between
+them, and MP's adult figures never enter this project's comparisons.
 
 ## Guardrails
 
