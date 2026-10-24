@@ -36,6 +36,10 @@ UC-Placement/
   README.md, CHANGELOG.md
   docs/                 plan of record (.docx, kept local), problem statement
   src/build_dataset.py  Week 1: reshape MPI data, add other-counties rows, join Census
+  src/measure.py, src/share_baseline.py, src/run_sql.py   Week 3 measures, share baselines, SQL runner
+  sql/                  SQL statements (DuckDB over parquet)
+  results/              aggregate outputs
+  tests/                pytest checks
   data/raw/             downloaded sources (not committed; see Data)
   data/processed/       generated tables (not committed)
   exchange/             contract and export for adjacent projects (see Exchange)
@@ -57,6 +61,25 @@ pip install -r requirements.txt   # SciPy, libpysal (spatial weights), matplotli
 python src/build_dataset.py          # Week 1 table + reconciliation
 python exchange/export_exchange.py   # aggregates for adjacent projects
 python alignment/align_mp.py         # optional, local only: coincidence checks with MP
+```
+
+## Measures, model and SQL
+
+| Path | What it is |
+|---|---|
+| `src/measure.py` | pandas + NumPy: concentration (HHI, effective number, Gini, top-10 share, Lorenz) and persistence (Spearman, Kendall) by fiscal year; writes the parquet table |
+| `src/share_baseline.py` | Share model, baseline stage: next year's state shares from last year, a 3-year mean, or all years pooled, backtested |
+| `docs/MODEL_CARD_share_model.md` | Model card: data, baselines and scores, the planned Bayesian model, limitations |
+| `sql/state_ranks.sql` | SQL with CTEs and window functions (`RANK`, `LAG`, running `SUM`) over the parquet table |
+| `src/run_sql.py` | Runs a SQL file with DuckDB, saves the result in `results/` |
+| `tests/` | pytest: metric checks, reconciliation, SQL matches pandas |
+| `results/` | Outputs (aggregate, from public MPI data) |
+
+```bash
+python src/measure.py
+python src/share_baseline.py
+python src/run_sql.py
+python -m pytest
 ```
 
 ## Week 1 results

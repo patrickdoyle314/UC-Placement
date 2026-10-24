@@ -1,5 +1,10 @@
-# Data assembly (MPI spreadsheet)
+# Data assembly (MPI spreadsheet, parquet)
+pandas>=2.1
 openpyxl>=3.1
+pyarrow>=15
+
+# SQL over parquet (sql/)
+duckdb>=1.1
 
 # Analysis, backtests, alignment checks
 numpy>=1.26
@@ -7,6 +12,9 @@ scipy>=1.11
 
 # Spatial analysis: weights for Moran's I / LISA (plan Week 4); pulls in geopandas, shapely, pandas
 libpysal>=4.10
+
+# Tests
+pytest>=8.0
 
 # Reporting: charts and Word documents
 matplotlib>=3.8

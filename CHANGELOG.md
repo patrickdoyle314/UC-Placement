@@ -7,6 +7,19 @@ dates are when the change was made.
 
 Nothing yet.
 
+## [0.3.0] - 2026-10-23
+
+### Added
+- `src/measure.py` (pandas + NumPy): concentration (HHI, effective number, Gini, top-10 share, Lorenz) and
+  persistence (Spearman, Kendall) by fiscal year; writes the parquet table.
+- `src/share_baseline.py`: share model baselines and backtest (last year's shares: 0.212 share points).
+- `docs/MODEL_CARD_share_model.md`: model card, including the planned Dirichlet-multinomial model.
+- `sql/state_ranks.sql`: CTEs and window functions (`RANK`, `LAG`, running `SUM`) over parquet with DuckDB;
+  `src/run_sql.py` runs it.
+- `tests/`: pytest checks (metrics, reconciliation, SQL matches pandas).
+- `results/`: aggregate outputs.
+- `requirements.txt`: pandas, pyarrow, DuckDB, pytest.
+
 ## [0.2.1] - 2026-10-22
 
 ### Added

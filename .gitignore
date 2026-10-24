@@ -16,3 +16,5 @@ __pycache__/
 
 # Internal plan document (mentions approvals); keep local
 docs/*.docx
+
+.pytest_cache/

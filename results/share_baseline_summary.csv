@@ -1,0 +1,4 @@
+method,mae_share_points,log_score
+naive,0.212,-3.1678
+mean3,0.227,-3.1693
+pooled,0.294,-3.1768
