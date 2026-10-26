@@ -10,7 +10,8 @@ FY2015–FY2025, and what a future rise in national volume would mean for local 
 
 **Status:** Weeks 1–3 done (data assembly, exploratory analysis, concentration and persistence), pending FSO and
 contract-lead approval. Next: Week 4 (spatial clustering and school-age comparison).
-This repository is **private** on GitHub until sign-off is recorded; it becomes public only after that.
+This repository is **public** since October 25, 2026, released by the project owner. The alignment notes
+with the MP project stay local and unpublished.
 
 ## Built alongside another project
 

@@ -7,6 +7,12 @@ dates are when the change was made.
 
 Nothing yet.
 
+## [0.4.1] - 2026-10-25
+
+### Changed
+- Repository made public on GitHub at the project owner's direction (was private pending sign-off).
+  README and problem statement status updated; the alignment notes with MP stay local and unpublished.
+
 ## [0.4.0] - 2026-10-25 (Week 2: exploratory analysis)
 
 ### Added

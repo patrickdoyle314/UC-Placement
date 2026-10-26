@@ -1,7 +1,7 @@
 # Problem statement: Where Unaccompanied Children Are Placed
 
-**Status:** draft for FSO and contract-lead review (Week 1). Not approved; the repository is private
-until approval is recorded below.
+**Status:** draft (Week 1). The repository was made public on October 25, 2026, at the project owner's
+direction; the approval table below is for the owner to complete.
 **Date:** October 22, 2026. Plan of record: `docs/portfolio_plan_2026-10-20.docx`.
 
 ## Question
