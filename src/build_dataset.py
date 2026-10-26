@@ -17,6 +17,18 @@ Outputs: data/processed/releases_by_fy_geo.csv
          data/processed/county_fips_unmatched.csv
 Usage  : python src/build_dataset.py
 """
+# ===================================================================================================
+# HOW TO READ THIS FILE
+# Business purpose: the Week 1 dataset. It turns MPI's spreadsheet of children released to sponsors
+# into one tidy table: one row per fiscal year and place (nation, state, listed county, "other
+# counties"), with the Census population of each place attached. Every later step reads this table.
+#
+# Guardrail built in here: counties appear only in years ORR published them (50+ releases). The rest
+# of a state is one "other counties" row and is never split or estimated.
+#
+# Python ideas: openpyxl (reading Excel), regular expressions for cleaning names, defaultdict,
+# dict comprehensions, csv.DictWriter, reconciliation checks that prove the totals add up.
+# ===================================================================================================
 import csv
 import re
 import unicodedata
@@ -32,7 +44,7 @@ OUT = ROOT / "data/processed"
 FYS = list(range(2014, 2026))
 CENSUS_YEAR_CODE = "6"  # July 1, 2024 in Vintage 2024 files
 
-USPS = {
+USPS = {  # state name -> two-letter postal code
     "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "California": "CA", "Colorado": "CO",
     "Connecticut": "CT", "Delaware": "DE", "District of Columbia": "DC", "Florida": "FL", "Georgia": "GA",
     "Hawaii": "HI", "Idaho": "ID", "Illinois": "IL", "Indiana": "IN", "Iowa": "IA", "Kansas": "KS",
@@ -45,10 +57,13 @@ USPS = {
     "West Virginia": "WV", "Wisconsin": "WI", "Wyoming": "WY",
     "Puerto Rico": "PR", "Virgin Islands": "VI",  # MPI lists both; national totals include them
 }
-COLUMNS = ["fiscal_year", "geo_level", "state", "state_name", "county_fips", "county_name", "county_key",
+COLUMNS = ["fiscal_year", "geo_level", "state", "state_name", "county_fips", "county_name", "county_key",  # the output table's columns, in order
            "releases", "listed_counties", "pop_total_2024", "pop_5_17_2024"]
 
 
+# MPI and the Census spell county names differently (accents, "St." vs "Saint", "County" suffix).
+# Cleaning both sides the same way lets them match. re.sub(pattern, replacement, text) is a regular-
+# expression find-and-replace.
 def norm(name):
     """Comparable county name: no accents, no punctuation, 'saint' for 'st.', no 'county'/'parish'."""
     n = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode().lower()
@@ -64,6 +79,9 @@ def county_key(name, st):
     return f"{n}|{st}"
 
 
+# Read the Census county file: total and school-age (5-17) population per county and per state.
+# defaultdict(lambda: [0, 0]) creates a [total, school-age] pair the first time a state appears, so
+# the code can add to it without checking whether it exists yet.
 def load_census():
     counties, states = {}, defaultdict(lambda: [0, 0])
     for r in csv.DictReader(open(CENSUS, encoding="latin-1")):
@@ -77,11 +95,15 @@ def load_census():
     return counties, states
 
 
-def num(v):
+def num(v):  # unpublished cells become None (missing), never 0
     """MPI cells: an integer, or blank / '-' where the county-year is not published."""
     return v if isinstance(v, (int, float)) else None
 
 
+# Read the MPI spreadsheet. data_only=True returns the values Excel displays (not formulas);
+# iter_rows(values_only=True) gives each row as a tuple. The data starts at row 9 on the States sheet
+# and row 8 on the Counties sheet. {f: ... for i, f in enumerate(FYS)} is a dict comprehension that
+# maps each fiscal year to its column.
 def load_mpi():
     wb = openpyxl.load_workbook(MPI, data_only=True)
     states = {}
@@ -96,12 +118,16 @@ def load_mpi():
     return states, counties
 
 
+# Steps: match MPI counties to Census FIPS codes, build one row per fiscal year and place, check that
+# the numbers add up, and write three CSV files.
 def main():
     census, census_states = load_census()
     mpi_states, mpi_counties = load_mpi()
     us = mpi_states.pop("United States")
     OUT.mkdir(parents=True, exist_ok=True)
 
+    # Match each MPI county to its Census FIPS code by cleaned name. Names that don't match are written
+    # out for review (for example Connecticut, whose newer Census geography uses planning regions).
     fips, unmatched = {}, []
     for name, st, _ in mpi_counties:
         hit = census.get((st, norm(name)))
@@ -132,12 +158,18 @@ def main():
                 rows.append(dict(fiscal_year=fy, geo_level="county", state=st, state_name=st_name, county_fips=f,
                                  county_name=f"{n}, {st}", county_key=county_key(n, st), releases=val,
                                  pop_total_2024=tot, pop_5_17_2024=school))
+            # "Other counties" = state total minus the listed counties: a real, published remainder. It is
+            # never
+            # split further; estimating counties under 50 releases would undo ORR's privacy threshold.
             other = total - sum(v for _, _, v in listed)
             all_matched = all((n, s) in fips for n, s, _ in listed)
             rows.append(dict(fiscal_year=fy, geo_level="other_counties", state=st, state_name=st_name,
                              county_name=f"Other counties, {st}", releases=other, listed_counties=len(listed),
                              pop_total_2024=spop[0] - listed_pop[0] if all_matched and spop[0] != "" else "",
                              pop_5_17_2024=spop[1] - listed_pop[1] if all_matched and spop[1] != "" else ""))
+            # Reconciliation: in every state-year the listed counties must not add up to more than the state
+            # total,
+            # and the states must add up to the national total. Any failure is printed at the end.
             recon.append(dict(fiscal_year=fy, state=st, state_total=total,
                               listed_county_sum=sum(v for _, _, v in listed), other_counties=other,
                               listed_counties=len(listed), ok=other >= 0))
@@ -145,7 +177,7 @@ def main():
                           other_counties=(us[fy] or 0) - state_sum, listed_counties="", ok=(us[fy] or 0) == state_sum))
 
     with open(OUT / "releases_by_fy_geo.csv", "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, COLUMNS)
+        w = csv.DictWriter(f, COLUMNS)  # DictWriter writes one dict per row; r.get(c, '') leaves a blank where a row has no value
         w.writeheader()
         for r in rows:
             w.writerow({c: r.get(c, "") for c in COLUMNS})

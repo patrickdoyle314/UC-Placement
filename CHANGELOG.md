@@ -7,6 +7,17 @@ dates are when the change was made.
 
 Nothing yet.
 
+## [0.4.2] - 2026-10-26
+
+### Changed
+- Comments for readers learning Python: every Python and SQL file now opens with a "HOW TO READ THIS FILE"
+  block (business purpose, layout, Python ideas used), with notes through the code on why each step exists
+  and which Python, pandas or SQL technique it uses. README gains a "Reading the code" section.
+- The notebook builder's comments also appear inside the notebook's code cells; `notebooks/week2_eda.ipynb`
+  was regenerated with identical outputs and byte-identical figures.
+- Comments and docstrings only: syntax trees match the previous version file by file (notebook cell code
+  included; SQL compared without comments); tests pass.
+
 ## [0.4.1] - 2026-10-25
 
 ### Changed

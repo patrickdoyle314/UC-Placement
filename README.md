@@ -49,6 +49,16 @@ UC-Placement/
   alignment/            local-only coincidence notes with the MP project (not committed)
 ```
 
+## Reading the code
+
+Every Python and SQL file opens with a **HOW TO READ THIS FILE** block: what the file does for the project
+(business purpose), how it is laid out, and the Python ideas it uses. Comments through the code explain *why*
+each step exists (for example, why "other counties" are never split) and point out Python, pandas and SQL
+techniques where they first appear. A suggested reading order for learning Python: `src/build_dataset.py` →
+`src/measure.py` (NumPy, pandas) → `sql/state_ranks.sql` (window functions) → `src/share_baseline.py` →
+`tests/test_measure.py` (pytest) → `notebooks/build_week2_eda.py`, whose comments also appear inside the
+notebook's code cells.
+
 ## Data
 
 | Source | File | Notes |

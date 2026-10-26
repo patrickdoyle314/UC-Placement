@@ -1,4 +1,13 @@
 """Tests for the metrics, the reshaped data and the SQL statement."""
+# ===================================================================================================
+# HOW TO READ THIS FILE
+# Business purpose: automatic checks, run with `pytest`. The first group tests the measures on
+# tiny made-up numbers whose answers are known by hand; the second checks the real data (listed
+# counties + other counties = state totals; SQL and pandas agree).
+#
+# Python ideas: pytest.approx for comparing decimals, pytest.mark.skipif to skip tests when the data
+# is missing (raw data is not in the repository), importing project modules with from src import ...
+# ===================================================================================================
 from pathlib import Path
 
 import numpy as np
@@ -9,17 +18,17 @@ from src import measure, run_sql, share_baseline
 
 ROOT = Path(__file__).resolve().parent.parent
 HAVE_DATA = (ROOT / "data/processed/releases_by_fy_geo.parquet").exists()
-needs_data = pytest.mark.skipif(not HAVE_DATA, reason="run src/build_dataset.py and src/measure.py first")
+needs_data = pytest.mark.skipif(not HAVE_DATA, reason="run src/build_dataset.py and src/measure.py first")  # reusable decorator: @needs_data skips a test until the processed data is built
 
 
 # --------------------------------------------------------------------------- metrics
 
-def test_hhi_bounds():
+def test_hhi_bounds():  # one place -> 1.0; four equal places -> 1/4
     assert measure.hhi([5]) == pytest.approx(1.0)
     assert measure.hhi([1, 1, 1, 1]) == pytest.approx(0.25)
 
 
-def test_gini_bounds():
+def test_gini_bounds():  # equal values -> 0; everything in 1 of 4 places -> (4 - 1) / 4 = 0.75
     assert measure.gini([3, 3, 3]) == pytest.approx(0.0)
     assert measure.gini([0, 0, 0, 10]) == pytest.approx(0.75)
 
@@ -31,7 +40,7 @@ def test_top_share_and_lorenz():
     assert np.all(np.diff(y) >= 0)
 
 
-def test_baseline_predictions_are_distributions():
+def test_baseline_predictions_are_distributions():  # every prediction must be valid shares: positive and adding up to 1
     wide = pd.DataFrame({"A": [10, 20, 30, 40], "B": [30, 20, 10, 0]}, index=[2015, 2016, 2017, 2018])
     for method in ("naive", "mean3", "pooled"):
         p = share_baseline.predict(wide, 2018, method)
@@ -42,7 +51,7 @@ def test_baseline_predictions_are_distributions():
 # --------------------------------------------------------------------------- data and SQL
 
 @needs_data
-def test_counties_plus_other_reconcile_to_states():
+def test_counties_plus_other_reconcile_to_states():  # guardrail check: listed counties + other counties = each state total, exactly
     df = measure.load()
     states = df[df.geo_level == "state"].set_index(["fiscal_year", "state"])["releases"]
     parts = df[df.geo_level.isin(["county", "other_counties"])].groupby(["fiscal_year", "state"])["releases"].sum()
@@ -50,7 +59,7 @@ def test_counties_plus_other_reconcile_to_states():
 
 
 @needs_data
-def test_sql_matches_pandas():
+def test_sql_matches_pandas():  # SQL and pandas must give the same shares and ranks
     sql = run_sql.run(ROOT / "sql/state_ranks.sql")
     states = measure.state_table(measure.load())
     states["share"] = states.groupby("fiscal_year")["releases"].transform(lambda r: r / r.sum())
@@ -62,7 +71,7 @@ def test_sql_matches_pandas():
 
 
 @needs_data
-def test_sql_cumulative_share_matches_top10():
+def test_sql_cumulative_share_matches_top10():  # the 10th state's running share in SQL = the top-10 share in measure.py
     sql = run_sql.run(ROOT / "sql/state_ranks.sql")
     conc = measure.concentration(measure.state_table(measure.load()), measure.county_table(measure.load()))
     top10 = conc[conc.level == "state"].set_index("fiscal_year")["top10_share"]

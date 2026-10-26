@@ -5,6 +5,15 @@ school-age population as aggregates. Everything here is already public MPI / Cen
 
 Usage: python exchange/export_exchange.py   (run src/build_dataset.py first)
 """
+# ===================================================================================================
+# HOW TO READ THIS FILE
+# Business purpose: publish this project's numbers for the companion MP (missing children)
+# project, as aggregate counts only, in the format both projects agreed on (exchange/EXCHANGE.md).
+# The projects never share records; each only reads the other's outbox.
+#
+# Python ideas: csv.writer, a set to avoid writing the same row twice, json.dumps for the manifest,
+# datetime for a timestamp.
+# ===================================================================================================
 import csv
 import datetime as dt
 import json
@@ -12,7 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTBOX = ROOT / "exchange/outbox"
-CONTRACT_VERSION = "1.0"
+CONTRACT_VERSION = "1.0"  # both projects check this before reading each other's files
 COLUMNS = ["geo_level", "state", "county_key", "county_name", "fiscal_year", "measure", "value", "publishable"]
 
 
@@ -20,7 +29,7 @@ def main():
     rows = list(csv.DictReader(open(ROOT / "data/processed/releases_by_fy_geo.csv", encoding="utf-8")))
     OUTBOX.mkdir(parents=True, exist_ok=True)
     n = 0
-    pop_written = set()
+    pop_written = set()  # places that already have a population row (one population figure per place, not per year)
     with open(OUTBOX / "aggregates.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(COLUMNS)
@@ -34,6 +43,9 @@ def main():
                             "census_pop_5_17_2024", r["pop_5_17_2024"], "true"])
                 pop_written.add(key)
                 n += 1
+    # The manifest says who produced the outbox, when, from which sources and under which contract
+    # version, so the reader can check compatibility first. publication_threshold is None because these
+    # counts are already public (ORR's 50-release county rule was applied before MPI published them).
     manifest = {
         "producer": "UC-Placement",
         "contract_version": CONTRACT_VERSION,

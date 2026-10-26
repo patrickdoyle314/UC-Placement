@@ -9,6 +9,15 @@ Scored with mean absolute error (share points) and log score per release (higher
 
 Usage: python src/probes/share_backtest.py   (needs data/processed/releases_by_fy_geo.csv)
 """
+# ===================================================================================================
+# HOW TO READ THIS FILE
+# Business purpose: a quick feasibility probe, written with only Python's standard library, that
+# asked "is next year's placement pattern predictable enough to model?" before the pandas version
+# (src/share_baseline.py) was built. It also checks county shares within the largest states.
+#
+# Python ideas: dicts of dicts, defaultdict, set union (|), comprehensions, *unpacking, math.log,
+# weighted averages computed by hand.
+# ===================================================================================================
 import csv
 import math
 from collections import defaultdict
@@ -19,11 +28,13 @@ EPS = 1e-4
 HELD_OUT = range(2017, 2026)  # need at least three earlier years for mean3
 
 
-def shares(counts):
+def shares(counts):  # {category: count} -> {category: share}; an empty dict if the total is 0
     tot = sum(counts.values())
     return {k: v / tot for k, v in counts.items()} if tot else {}
 
 
+# keys covers every category in the prediction or the actual year (set union |), so a county that
+# newly appears counts as a miss instead of being skipped.
 def score(pred, actual_counts):
     keys = set(pred) | set(actual_counts)
     act = shares(actual_counts)
@@ -35,6 +46,8 @@ def score(pred, actual_counts):
     return mae, log
 
 
+# The three rules, built only from years before fy. set().union(*prev) collects every category seen in
+# the last three years; the * passes the list's items as separate arguments.
 def methods(history, fy):
     prev = [history[y] for y in range(fy - 3, fy) if y in history]
     pooled = defaultdict(int)
@@ -49,6 +62,8 @@ def methods(history, fy):
 
 def run(label, groups):
     """groups: {group_id: {fy: {category: releases}}}; results averaged over groups and held-out years."""
+    # Per method: [weighted MAE, weighted log score, total weight]. A held-out year is skipped unless all
+    # three earlier years exist.
     agg = defaultdict(lambda: [0.0, 0.0, 0])
     for g, history in groups.items():
         for fy in HELD_OUT:
@@ -66,6 +81,8 @@ def run(label, groups):
         print(f"  {name:8s} {100 * m / w:16.3f} {l / w:18.4f}")
 
 
+# Reshape the rows into histories: nationally {year: {state: releases}}, and within each state
+# {year: {county or "other": releases}}.
 def main():
     rows = list(csv.DictReader(open(ROOT / "data/processed/releases_by_fy_geo.csv", encoding="utf-8")))
     nat = {"US": defaultdict(dict)}
@@ -77,7 +94,7 @@ def main():
         elif r["geo_level"] in ("county", "other_counties"):
             within[r["state"]][fy][r["county_key"] or "other"] = v
     run("State shares of national releases (50 states + DC)", nat)
-    big = {s: h for s, h in within.items() if sum(sum(c.values()) for c in h.values()) > 20000}
+    big = {s: h for s, h in within.items() if sum(sum(c.values()) for c in h.values()) > 20000}  # only states large enough for county shares to be meaningful
     run(f"County shares within state ({len(big)} states with > 20,000 releases, other counties as one category)", big)
 
 
