@@ -10,7 +10,8 @@ duckdb>=1.1
 numpy>=1.26
 scipy>=1.11
 
-# Spatial analysis: weights for Moran's I / LISA (plan Week 4); pulls in geopandas, shapely, pandas
+# Maps (Census boundary files) and spatial analysis: weights for Moran's I / LISA (plan Week 4)
+geopandas>=0.14
 libpysal>=4.10
 
 # Tests
@@ -19,3 +20,8 @@ pytest>=8.0
 # Reporting: charts and Word documents
 matplotlib>=3.8
 python-docx>=1.1
+
+# Building and running the notebooks
+nbformat>=5.9
+nbclient>=0.10
+ipykernel>=6.29

@@ -8,7 +8,8 @@ FY2015–FY2025, and what a future rise in national volume would mean for local 
 - Problem statement (Week 1, draft for approval): [`docs/problem_statement.md`](docs/problem_statement.md)
 - Changes: [`CHANGELOG.md`](CHANGELOG.md)
 
-**Status:** Week 1 (scope and data assembly) done, pending FSO and contract-lead approval.
+**Status:** Weeks 1–3 done (data assembly, exploratory analysis, concentration and persistence), pending FSO and
+contract-lead approval. Next: Week 4 (spatial clustering and school-age comparison).
 This repository is **private** on GitHub until sign-off is recorded; it becomes public only after that.
 
 ## Built alongside another project
@@ -37,6 +38,7 @@ UC-Placement/
   docs/                 plan of record (.docx, kept local), problem statement
   src/build_dataset.py  Week 1: reshape MPI data, add other-counties rows, join Census
   src/measure.py, src/share_baseline.py, src/run_sql.py   Week 3 measures, share baselines, SQL runner
+  notebooks/            Week 2 exploratory notebook and its builder
   sql/                  SQL statements (DuckDB over parquet)
   results/              aggregate outputs
   tests/                pytest checks
@@ -59,6 +61,7 @@ UC-Placement/
 ```bash
 pip install -r requirements.txt   # SciPy, libpysal (spatial weights), matplotlib and python-docx (reporting)
 python src/build_dataset.py          # Week 1 table + reconciliation
+python notebooks/build_week2_eda.py  # Week 2 notebook: builds, runs and saves it with its charts
 python exchange/export_exchange.py   # aggregates for adjacent projects
 python alignment/align_mp.py         # optional, local only: coincidence checks with MP
 ```
@@ -81,6 +84,24 @@ python src/share_baseline.py
 python src/run_sql.py
 python -m pytest
 ```
+
+## Week 2 results: exploratory analysis
+
+[`notebooks/week2_eda.ipynb`](notebooks/week2_eda.ipynb), built and run by `notebooks/build_week2_eda.py` (pandas,
+matplotlib, GeoPandas with Census 2023 cartographic boundaries). Charts are also in `results/figures/week2_*.png`.
+Five findings, FY2015–FY2025:
+
+1. National releases ranged from 16,864 (FY2020) to 127,512 (FY2022); FY2021–FY2024 hold 62% of all releases, and
+   FY2025 fell to 24,259, 76% below FY2024.
+2. The six largest receiving states (TX, CA, FL, NY, MD, NJ) took 53% of releases; Texas's share stayed between
+   11.7% and 14.9%, and year-to-year state rank correlations never fell below 0.98.
+3. The 20 largest receiving counties took 34% of releases; Harris County, TX received the most children in 9 of
+   11 years, and all 20 were listed (50+ releases) every year.
+4. Listed counties ranged from 73 (FY2020) to 338 (FY2022) and held 63%–89% of releases; the rest are the
+   unlisted "other counties" group, never split further.
+5. Per school-age child (ages 5–17, 2024), the highest totals were in Maryland, DC and Virginia (36 per 1,000) and
+   the lowest in Hawaii, Vermont and Alaska. 389 of the 393 listed counties are on the county map (4 Connecticut
+   counties have no FIPS match; Alaska, Hawaii and Puerto Rico are left off the maps).
 
 ## Week 1 results
 

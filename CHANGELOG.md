@@ -7,6 +7,19 @@ dates are when the change was made.
 
 Nothing yet.
 
+## [0.4.0] - 2026-10-25 (Week 2: exploratory analysis)
+
+### Added
+- `notebooks/week2_eda.ipynb`: five findings, each with a chart (national releases by year, top state shares,
+  top 20 counties over time, listed vs other counties, state and county maps); outputs saved in the notebook.
+- `notebooks/build_week2_eda.py`: builds and runs the notebook so it stays reproducible.
+- `results/figures/week2_*.png`: the notebook's charts.
+- `data/raw/geo/`: Census Bureau 2023 cartographic boundary files (states and counties, 1:20m), not committed.
+- `requirements.txt`: GeoPandas, and nbformat / nbclient / ipykernel for building the notebook.
+
+### Changed
+- README status: Weeks 1–3 done (Week 3 had landed before Week 2).
+
 ## [0.3.0] - 2026-10-23
 
 ### Added
