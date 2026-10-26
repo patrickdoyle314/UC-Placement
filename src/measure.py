@@ -10,6 +10,10 @@ States: the 50 states and DC. Counties: every listed county (>= 50 releases that
 
 Persistence, each pair of consecutive fiscal years: Spearman and Kendall rank correlation of state shares.
 
+Tiers (plan Week 3): every county listed at least once is placed in a size tier each year (not listed,
+50-199, 200-999, 1,000+ releases); a Markov transition matrix counts how often counties move between
+tiers from one year to the next. "Not listed" is ORR's published threshold, never an estimate.
+
 Also writes data/processed/releases_by_fy_geo.parquet for DuckDB (sql/).
 
 Usage: python src/measure.py   (after src/build_dataset.py)
@@ -21,7 +25,8 @@ Usage: python src/measure.py   (after src/build_dataset.py)
 # services (schools, legal aid, case management) where children consistently arrive.
 #
 # Python ideas: small pure functions on NumPy arrays (easy to test), pandas filtering and groupby,
-# apply with a nested function, pivot (long table -> wide table), rank correlations.
+# apply with a nested function, pivot (long table -> wide table), rank correlations, np.select and
+# np.add.at for the tier transition counts.
 # ===================================================================================================
 from pathlib import Path
 
@@ -137,7 +142,43 @@ def persistence(states: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def main():  # write the parquet copy for SQL, compute both tables, save them to results/
+# Tiers: put every county-year into a size band, then count how often counties move between bands from
+# one year to the next (a Markov transition matrix). Planners can read a row as "of the counties in this
+# band this year, the share in each band next year". "Not listed" means under ORR's 50-release threshold
+# that year: a published fact, so no unlisted county's count is ever estimated.
+TIERS = ["not listed (<50)", "50-199", "200-999", "1,000+"]
+
+
+def tier_codes(df: pd.DataFrame) -> pd.DataFrame:
+    """One row per county listed at least once in FY2015-FY2025, one column per year: tier code 0-3."""
+    c = df[(df.geo_level == "county") & df.fiscal_year.isin(FISCAL_YEARS)]
+    wide = c.pivot_table(index="county_key", columns="fiscal_year", values="releases", aggfunc="sum")             .reindex(columns=list(FISCAL_YEARS))  # NaN = not listed that year
+    # np.select takes the first condition that holds in each cell: 1,000+ -> 3, 200+ -> 2, listed -> 1, else 0
+    codes = np.select([wide >= 1000, wide >= 200, wide.notna()], [3, 2, 1], default=0)
+    return pd.DataFrame(codes, index=wide.index, columns=wide.columns)
+
+
+def tier_transitions(codes: pd.DataFrame) -> pd.DataFrame:
+    """Counts and row shares of year-to-year moves between tiers, pooled over all consecutive years."""
+    a = codes.to_numpy()
+    counts = np.zeros((len(TIERS), len(TIERS)), dtype=int)
+    # Pair each year's tier (columns 0..n-2) with the next year's (1..n-1); np.add.at adds 1 per pair.
+    np.add.at(counts, (a[:, :-1].ravel(), a[:, 1:].ravel()), 1)
+    totals = counts.sum(axis=1, keepdims=True)
+    probs = np.divide(counts, totals, out=np.zeros(counts.shape), where=totals > 0)  # row shares; 0 if a row is empty
+    return pd.DataFrame([{"from_tier": TIERS[i], "to_tier": TIERS[j], "county_years": int(counts[i, j]),
+                          "probability": round(float(probs[i, j]), 3)}
+                         for i in range(len(TIERS)) for j in range(len(TIERS))])
+
+
+def tiers_by_year(codes: pd.DataFrame) -> pd.DataFrame:
+    """How many of the ever-listed counties sit in each tier, per fiscal year."""
+    # np.bincount counts how many times each code 0..3 appears in a year's column
+    out = pd.DataFrame({fy: np.bincount(codes[fy], minlength=len(TIERS)) for fy in codes.columns}, index=TIERS).T
+    return out.rename_axis("fiscal_year").reset_index()
+
+
+def main():  # write the parquet copy for SQL, compute the tables, save them to results/
     df = load()
     df.to_parquet(PROCESSED / "releases_by_fy_geo.parquet", index=False)  # parquet: a compact, typed file format that DuckDB reads very fast
     states, counties = state_table(df), county_table(df)
@@ -145,10 +186,16 @@ def main():  # write the parquet copy for SQL, compute both tables, save them to
     RESULTS.mkdir(exist_ok=True)
     conc.to_csv(RESULTS / "concentration_by_year.csv", index=False)
     pers.to_csv(RESULTS / "persistence_state_ranks.csv", index=False)
+    codes = tier_codes(df)
+    trans = tier_transitions(codes)
+    trans.to_csv(RESULTS / "tier_transitions.csv", index=False)
+    tiers_by_year(codes).to_csv(RESULTS / "county_tiers_by_year.csv", index=False)
     with pd.option_context("display.width", 140, "display.max_columns", 20):
         print(conc.to_string(index=False))
         print()
         print(pers.to_string(index=False))
+        print()
+        print(trans.pivot(index="from_tier", columns="to_tier", values="probability").reindex(TIERS)[TIERS])
 
 
 if __name__ == "__main__":

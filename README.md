@@ -6,10 +6,11 @@ FY2015–FY2025, and what a future rise in national volume would mean for local 
 
 - Plan of record: [`docs/portfolio_plan_2026-10-20.docx`](docs/portfolio_plan_2026-10-20.docx)
 - Problem statement (Week 1, draft for approval): [`docs/problem_statement.md`](docs/problem_statement.md)
+- Week 4 findings memo (concentration, stability, geography): [`docs/week4_findings_memo.md`](docs/week4_findings_memo.md)
 - Changes: [`CHANGELOG.md`](CHANGELOG.md)
 
-**Status:** Weeks 1–3 done (data assembly, exploratory analysis, concentration and persistence), pending FSO and
-contract-lead approval. Next: Week 4 (spatial clustering and school-age comparison).
+**Status:** Weeks 1–4 done (data assembly, exploratory analysis, concentration and persistence, geography), pending
+FSO and contract-lead approval. Next: Week 5 (Bayesian share model).
 This repository is **public** since October 25, 2026, released by the project owner. The alignment notes
 with the MP project stay local and unpublished.
 
@@ -36,9 +37,10 @@ These apply to every file, chart and write-up in this project:
 ```
 UC-Placement/
   README.md, CHANGELOG.md
-  docs/                 plan of record (.docx, kept local), problem statement
+  docs/                 plan of record (.docx, kept local), problem statement, Week 4 findings memo
   src/build_dataset.py  Week 1: reshape MPI data, add other-counties rows, join Census
-  src/measure.py, src/share_baseline.py, src/run_sql.py   Week 3 measures, share baselines, SQL runner
+  src/measure.py, src/share_baseline.py, src/run_sql.py   Week 3 measures, tiers, share baselines, SQL runner
+  src/geography.py, src/build_week4_memo.py              Week 4: Moran's I, LISA, school-age comparison; memo
   notebooks/            Week 2 exploratory notebook and its builder
   sql/                  SQL statements (DuckDB over parquet)
   results/              aggregate outputs
@@ -57,7 +59,7 @@ each step exists (for example, why "other counties" are never split) and point o
 techniques where they first appear. A suggested reading order for learning Python: `src/build_dataset.py` →
 `src/measure.py` (NumPy, pandas) → `sql/state_ranks.sql` (window functions) → `src/share_baseline.py` →
 `tests/test_measure.py` (pytest) → `notebooks/build_week2_eda.py`, whose comments also appear inside the
-notebook's code cells.
+notebook's code cells → `src/geography.py` (GeoPandas, spatial statistics).
 
 ## Data
 
@@ -70,9 +72,11 @@ notebook's code cells.
 ## Run
 
 ```bash
-pip install -r requirements.txt   # SciPy, libpysal (spatial weights), matplotlib and python-docx (reporting)
+pip install -r requirements.txt   # SciPy, libpysal + esda (spatial statistics), matplotlib and python-docx (reporting)
 python src/build_dataset.py          # Week 1 table + reconciliation
 python notebooks/build_week2_eda.py  # Week 2 notebook: builds, runs and saves it with its charts
+python src/geography.py              # Week 4: Moran's I, LISA, school-age comparison (after src/measure.py)
+python src/build_week4_memo.py       # Week 4 findings memo, from the results tables
 python exchange/export_exchange.py   # aggregates for adjacent projects
 python alignment/align_mp.py         # optional, local only: coincidence checks with MP
 ```
@@ -81,20 +85,39 @@ python alignment/align_mp.py         # optional, local only: coincidence checks 
 
 | Path | What it is |
 |---|---|
-| `src/measure.py` | pandas + NumPy: concentration (HHI, effective number, Gini, top-10 share, Lorenz) and persistence (Spearman, Kendall) by fiscal year; writes the parquet table |
+| `src/measure.py` | pandas + NumPy: concentration (HHI, effective number, Gini, top-10 share, Lorenz) and persistence (Spearman, Kendall) by fiscal year; county size tiers and their Markov transition matrix; writes the parquet table |
+| `src/geography.py` | GeoPandas + libpysal + esda: global Moran's I and LISA clusters (states: releases per school-age child; counties: years listed), Moran's I by year, release share vs school-age share |
+| `src/build_week4_memo.py` | Writes `docs/week4_findings_memo.md` from the results tables, with the tier transition chart |
 | `src/share_baseline.py` | Share model, baseline stage: next year's state shares from last year, a 3-year mean, or all years pooled, backtested |
 | `docs/MODEL_CARD_share_model.md` | Model card: data, baselines and scores, the planned Bayesian model, limitations |
 | `sql/state_ranks.sql` | SQL with CTEs and window functions (`RANK`, `LAG`, running `SUM`) over the parquet table |
 | `src/run_sql.py` | Runs a SQL file with DuckDB, saves the result in `results/` |
-| `tests/` | pytest: metric checks, reconciliation, SQL matches pandas |
+| `tests/` | pytest: metric checks, reconciliation, SQL matches pandas, tiers, Moran's I, clusters, school-age ratio |
 | `results/` | Outputs (aggregate, from public MPI data) |
 
 ```bash
 python src/measure.py
 python src/share_baseline.py
 python src/run_sql.py
+python src/geography.py
+python src/build_week4_memo.py
 python -m pytest
 ```
+
+## Week 4 results: geography
+
+Full memo with charts and methods: [`docs/week4_findings_memo.md`](docs/week4_findings_memo.md). Check-in question:
+*is the pattern stable enough that last year predicts next year?*
+
+1. **States, yes.** Year-to-year state rank correlations are 0.985 or higher, and "last year's shares" misses each
+   state's share by 0.21 percentage points on average, the best of three simple rules.
+2. **Counties: steady places, moving counts.** How many counties clear the 50-release threshold follows national
+   volume (73 listed in FY2020, 338 in FY2022, 109 in FY2025); a 1,000+ county stays 1,000+ the next year 58% of the time.
+3. **Releases cluster.** Moran's I is 0.48 for state release rates per school-age child and 0.40 for how often
+   counties are listed (both p = 0.0001), and every single year is significant. Eight county clusters (the largest
+   runs from Prince George's County, MD to Suffolk County, NY) received 51% of all FY2015–FY2025 releases.
+4. **Compared with school-age population,** listed counties took 1.4–2.0 times their share each year. The 70
+   counties listed every year received 59% of releases and have 31% of the nation's school-age children.
 
 ## Week 2 results: exploratory analysis
 

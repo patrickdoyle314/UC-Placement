@@ -7,6 +7,29 @@ dates are when the change was made.
 
 Nothing yet.
 
+## [0.5.0] - 2026-10-26 (Week 4: geography)
+
+### Added
+- `src/geography.py`: global Moran's I and local clusters (LISA) for states (releases per 1,000 school-age
+  children) and counties (years listed with 50+ releases, a published fact only), Moran's I for each fiscal
+  year, neighboring High-High counties grouped into named clusters, false-discovery-rate counts, and release
+  shares compared with school-age population shares (listed counties, other counties as one group, and the
+  70 counties listed every year). Tables in `results/`, charts in `results/figures/week4_*.png`.
+- `src/build_week4_memo.py` and `docs/week4_findings_memo.md`: the Week 4 findings memo on concentration,
+  stability and geography, with every number read from `results/`. It answers the check-in question: state
+  shares are stable enough that last year predicts next year; county counts move with national volume.
+- County size tiers and their Markov transition matrix in `src/measure.py` (`results/tier_transitions.csv`,
+  `results/county_tiers_by_year.csv`): the Week 3 plan item that had not been built yet.
+- `tests/test_geography.py`: tiers, Moran's I on known patterns, cluster grouping, the school-age ratio, and a
+  check that tier counts match the published county rows (13 tests in all).
+- `esda` in `requirements.txt`.
+
+### Notes
+- With 49 states, no single state cluster passes the false-discovery-rate correction; the memo calls them
+  suggestive. 105 of 151 High-High counties pass it.
+- Connecticut's four listed counties are left out of the county map statistics (its 2023 Census counties are
+  planning regions).
+
 ## [0.4.2] - 2026-10-26
 
 ### Changed

@@ -10,9 +10,10 @@ duckdb>=1.1
 numpy>=1.26
 scipy>=1.11
 
-# Maps (Census boundary files) and spatial analysis: weights for Moran's I / LISA (plan Week 4)
+# Maps (Census boundary files) and spatial statistics: neighbor weights (libpysal), Moran's I and LISA (esda)
 geopandas>=0.14
 libpysal>=4.10
+esda>=2.5
 
 # Tests
 pytest>=8.0

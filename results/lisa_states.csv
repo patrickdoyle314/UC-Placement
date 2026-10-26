@@ -1,0 +1,50 @@
+state,state_name,releases,pop_5_17,per_1000_school_age,ratio_to_national,lisa,p_sim
+AL,Alabama,12896,839411.0,15.363,1.156,Not significant,0.1
+AR,Arkansas,5085,522677.0,9.729,0.732,Not significant,0.224
+AZ,Arizona,5560,1191215.0,4.668,0.351,Not significant,0.135
+CA,California,82189,6330875.0,12.982,0.977,Not significant,0.133
+CO,Colorado,8552,901507.0,9.486,0.714,Not significant,0.067
+CT,Connecticut,7896,544293.0,14.507,1.092,High-High,0.047
+DC,District of Columbia,2776,90393.0,30.71,2.312,High-High,0.002
+DE,Delaware,3508,158637.0,22.113,1.665,High-High,0.016
+FL,Florida,71707,3345306.0,21.435,1.613,Not significant,0.239
+GA,Georgia,28271,1902781.0,14.858,1.118,High-High,0.049
+IA,Iowa,4835,544185.0,8.885,0.669,Not significant,0.163
+ID,Idaho,842,353933.0,2.379,0.179,Low-Low,0.006
+IL,Illinois,14156,2037081.0,6.949,0.523,Not significant,0.132
+IN,Indiana,10015,1180190.0,8.486,0.639,Not significant,0.114
+KS,Kansas,4900,518507.0,9.45,0.711,Not significant,0.382
+KY,Kentucky,7499,758961.0,9.881,0.744,Not significant,0.466
+LA,Louisiana,16667,787829.0,21.156,1.592,Not significant,0.388
+MA,Massachusetts,16766,1005961.0,16.667,1.255,Not significant,0.374
+MD,Maryland,37010,1021706.0,36.224,2.727,High-High,0.025
+ME,Maine,514,186532.0,2.756,0.207,Not significant,0.104
+MI,Michigan,3802,1583169.0,2.402,0.181,Not significant,0.142
+MN,Minnesota,6566,973277.0,6.746,0.508,Not significant,0.079
+MO,Missouri,5454,1022586.0,5.334,0.401,Not significant,0.493
+MS,Mississippi,4403,501010.0,8.788,0.662,Not significant,0.095
+MT,Montana,210,176043.0,1.193,0.09,Low-Low,0.011
+NC,North Carolina,26857,1742747.0,15.411,1.16,High-High,0.041
+ND,North Dakota,146,136269.0,1.071,0.081,Not significant,0.103
+NE,Nebraska,5723,359713.0,15.91,1.198,Not significant,0.129
+NH,New Hampshire,391,187267.0,2.088,0.157,Not significant,0.174
+NJ,New Jersey,36712,1516331.0,24.211,1.822,Not significant,0.146
+NM,New Mexico,1052,340582.0,3.089,0.233,Not significant,0.249
+NV,Nevada,3615,517908.0,6.98,0.525,Not significant,0.063
+NY,New York,56630,2938468.0,19.272,1.451,Not significant,0.319
+OH,Ohio,11892,1918843.0,6.197,0.466,Not significant,0.052
+OK,Oklahoma,5809,722081.0,8.045,0.606,Not significant,0.264
+OR,Oregon,3609,624816.0,5.776,0.435,Not significant,0.168
+PA,Pennsylvania,12857,1965891.0,6.54,0.492,Low-High,0.022
+RI,Rhode Island,3636,152191.0,23.891,1.798,Not significant,0.206
+SC,South Carolina,11905,856349.0,13.902,1.046,Not significant,0.25
+SD,South Dakota,1479,163362.0,9.054,0.681,Low-Low,0.044
+TN,Tennessee,25080,1166335.0,21.503,1.619,Not significant,0.214
+TX,Texas,98896,5687749.0,17.388,1.309,Not significant,0.478
+UT,Utah,2930,702642.0,4.17,0.314,Low-Low,0.011
+VA,Virginia,36035,1400549.0,25.729,1.937,High-High,0.007
+VT,Vermont,64,86180.0,0.743,0.056,Not significant,0.367
+WA,Washington,8334,1230304.0,6.774,0.51,Not significant,0.098
+WI,Wisconsin,3516,933131.0,3.768,0.284,Not significant,0.101
+WV,West Virginia,408,262244.0,1.556,0.117,Not significant,0.069
+WY,Wyoming,233,97253.0,2.396,0.18,Not significant,0.082

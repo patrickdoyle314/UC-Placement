@@ -1,0 +1,32 @@
+cluster,name,largest_counties,states,counties,listed_releases_fy2015_2025,share_of_national_releases,mean_years_listed
+1,"Prince George's County, MD to Suffolk County, NY","Prince George's County, MD; Suffolk County, NY; Queens County, NY",NJ NY MD PA VA,53,149869,0.2081,7.8
+2,"Los Angeles County, CA","Los Angeles County, CA; Orange County, CA; Riverside County, CA",CA,9,48983,0.068,9.4
+3,"Harris County, TX","Harris County, TX; Galveston County, TX; Fort Bend County, TX",TX,5,45364,0.063,7.0
+4,"Miami-Dade County, FL","Miami-Dade County, FL; Palm Beach County, FL; Broward County, FL",FL,6,38251,0.0531,9.3
+5,"Dallas County, TX","Dallas County, TX; Tarrant County, TX; Denton County, TX",TX,4,25208,0.035,9.5
+6,"Alameda County, CA","Alameda County, CA; San Mateo County, CA; Contra Costa County, CA",CA,12,24120,0.0335,7.7
+7,"Suffolk County, MA to Providence County, RI","Suffolk County, MA; Essex County, MA; Middlesex County, MA",MA NH RI,9,18712,0.026,7.9
+8,"DeKalb County, GA","DeKalb County, GA; Gwinnett County, GA; Cobb County, GA",GA,6,16577,0.023,8.8
+9,"Orange County, FL","Orange County, FL; Hillsborough County, FL; Manatee County, FL",FL,11,14877,0.0207,6.2
+10,"Cook County, IL","Cook County, IL; Kane County, IL; DuPage County, IL",IL,4,10259,0.0142,6.5
+11,"Davidson County, TN","Davidson County, TN; Wilson County, TN",TN,2,8916,0.0124,6.0
+12,"Arapahoe County, CO","Arapahoe County, CO; Denver County, CO; Adams County, CO",CO,4,4313,0.006,6.5
+13,"Richmond city, VA","Richmond city, VA; Henrico County, VA",VA,2,3317,0.0046,9.0
+14,"Orleans Parish, LA","Orleans Parish, LA; St. Tammany Parish, LA",LA,2,2810,0.0039,7.0
+15,"Wyandotte County, KS","Wyandotte County, KS; Johnson County, KS",KS,2,2123,0.0029,7.5
+16,"Morgan County, AL","Morgan County, AL; Madison County, AL",AL,2,1089,0.0015,6.0
+17,"Ramsey County, MN","Ramsey County, MN",MN,1,791,0.0011,7.0
+18,"Butler County, OH","Butler County, OH",OH,1,780,0.0011,6.0
+19,"Williamson County, TX","Williamson County, TX; Bastrop County, TX",TX,2,716,0.001,3.5
+20,"Johnston County, NC","Johnston County, NC; Sampson County, NC; Harnett County, NC",NC,3,622,0.0009,3.0
+21,"Virginia Beach city, VA","Virginia Beach city, VA",VA,1,395,0.0005,5.0
+22,"Livingston Parish, LA","Livingston Parish, LA",LA,1,370,0.0005,4.0
+23,"Gaston County, NC","Gaston County, NC",NC,1,363,0.0005,4.0
+24,"Dorchester County, SC","Dorchester County, SC",SC,1,337,0.0005,4.0
+25,"Pierce County, WA","Pierce County, WA",WA,1,291,0.0004,4.0
+26,"Jasper County, SC","Jasper County, SC",SC,1,218,0.0003,3.0
+27,"Brunswick County, NC","Brunswick County, NC",NC,1,164,0.0002,3.0
+28,"Henderson County, NC","Henderson County, NC",NC,1,160,0.0002,3.0
+29,"Cabarrus County, NC","Cabarrus County, NC",NC,1,118,0.0002,2.0
+30,"Orange County, NC","Orange County, NC",NC,1,108,0.0001,2.0
+31,"Kent County, DE","Kent County, DE",DE,1,64,0.0001,1.0
